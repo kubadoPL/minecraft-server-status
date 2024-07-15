@@ -473,7 +473,7 @@ Ensure the default browser behavior of the `hidden` attribute.
   height: 100vh;
   align-items: center;
   justify-content: center;
-  background-image: url('../dist/img/bk.jpg');
+  background-image: url('../dist/img/main.png');
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -553,4 +553,40 @@ Ensure the default browser behavior of the `hidden` attribute.
 .text-gray-300 {
   --tw-text-opacity: 1;
   color: rgb(209 213 219 / var(--tw-text-opacity));
+}
+
+#player-count {
+  color: rgb(26, 255, 0);
+}
+
+#player-countmax {
+  color: red;
+}
+
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.button:hover {
+  background-color: #45a049;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding: 1rem 0;
+  background-color: #333;
+  color: #AAAAAA;
+  font-size: 14px;
 }

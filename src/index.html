@@ -3,49 +3,118 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server Status</title>
   <link href="../dist/output.css" rel="stylesheet">
+  <style>
+    .color-black { color: #000000; }
+    .color-dark_blue { color: #0000AA; }
+    .color-dark_green { color: #00AA00; }
+    .color-dark_aqua { color: #00AAAA; }
+    .color-dark_red { color: #AA0000; }
+    .color-dark_purple { color: #AA00AA; }
+    .color-gold { color: #FFAA00; }
+    .color-gray { color: #AAAAAA; }
+    .color-dark_gray { color: #555555; }
+    .color-blue { color: #5555FF; }
+    .color-green { color: #55FF55; }
+    .color-aqua { color: #55FFFF; }
+    .color-red { color: #FF5555; }
+    .color-light_purple { color: #FF55FF; }
+    .color-yellow { color: #FFFF55; }
+    .color-white { color: #FFFFFF; }
+    .bold { font-weight: bold; }
+    .italic { font-style: italic; }
+    .underline { text-decoration: underline; }
+    .strikethrough { text-decoration: line-through; }
+  </style>
 </head>
 <body class="main">
-    <div class="center-container">
-        <img src="../dist/img/block.png" class="h-36 w-36" id="server-icon"/>
-        <div class="flex flex-col ">
-            <h1 class="text-7xl font-medium text-white-800 mb-5" id="server-ip">Server Offline!</h1>
-            <span class="text-gray-300 text-lg mb-3 server-online" id="motd">Server Offline!</span>
-            <div class=" text-3xl"><span class="font-semibold server-status" id="player-count">0</span> Players Online</div>
-        </div>
+  <div class="center-container">
+    <img src="../dist/img/block.png" class="h-36 w-36" id="server-icon"/>
+    <div class="flex flex-col">
+      <h1 class="text-7xl font-medium text-white-800 mb-5" id="server-ip">Server Offline!</h1>
+      <span class="text-gray-300 text-lg mb-3 server-online" id="motd">Server Offline!</span>
+      <div class="text-3xl"><span class="font-semibold server-status" id="player-count">0</span>/<span id="player-countmax">0</span><span id="online-message"> Players Online</span></div>
+      <span class="text-gray-300 text-lg mb-3 server-online" id="serversion"></span>
+      <a href="https://modpack-link.com" class="button" id="modpack-link" target="_blank">Download Modpack</a>
     </div>
-<script>
-function initServerData(serverIp,serverPort){
-    const serverIpElement = document.getElementById('server-ip');
-    serverIpElement.innerHTML = serverIp;
+  </div>
+  <div class="footer">
+    © 2024 K5 Studio
+  </div>
+  <script>
+    function initServerData(serverIp, serverPort) {
+      const serverIpElement = document.getElementById('server-ip');
+      serverIpElement.innerHTML = serverIp;
 
-    console.log('https://mcapi.us/server/status?ip='+serverIp+'&port='+serverPort);
-    fetch('https://mcapi.us/server/status?ip='+serverIp+'&port='+serverPort)
-    .then(response => response.json())
-    .then(data => handleServerStatus(data));
+      fetch('https://mcapi.us/server/status?ip=' + serverIp + '&port=' + serverPort)
+        .then(response => response.json())
+        .then(data => handleServerStatus(data));
 
-    function handleServerStatus(data){
-        if(data.status=='error'){
-            console.log(data.error);
-            return false;
+      function handleServerStatus(data) {
+        if (data.status == 'error') {
+          console.log(data.error);
+          serverIpElement.innerHTML = "Server Offline";
+          document.getElementById("motd").innerHTML = "Try Refreshing the page!";
+          document.getElementById("player-count").innerHTML = "";
+          document.getElementById("online-message").innerHTML = "";
+          document.getElementById("server-icon").src = "../dist/img/block.png";
+          return;
         }
 
-        const motd = document.getElementById("motd");
-        motd.innerHTML = data.motd;
+        document.getElementById("motd").innerHTML = parseMinecraftFormatting(data.motd);
+        document.getElementById("player-count").innerHTML = data.players.now;
+        document.getElementById("player-countmax").innerHTML = data.players.max;
+        document.getElementById("server-icon").src = data.favicon;
+        document.getElementById("serversion").innerHTML = "Server Version: " + data.server.name;
+      }
 
-        const playerCounter = document.getElementById("player-count");
-        playerCounter.innerHTML = data.players.now;
+      function parseMinecraftFormatting(text) {
+        const colorCodes = {
+          '0': 'color-black',
+          '1': 'color-dark_blue',
+          '2': 'color-dark_green',
+          '3': 'color-dark_aqua',
+          '4': 'color-dark_red',
+          '5': 'color-dark_purple',
+          '6': 'color-gold',
+          '7': 'color-gray',
+          '8': 'color-dark_gray',
+          '9': 'color-blue',
+          'a': 'color-green',
+          'b': 'color-aqua',
+          'c': 'color-red',
+          'd': 'color-light_purple',
+          'e': 'color-yellow',
+          'f': 'color-white',
+          'l': 'bold',
+          'o': 'italic',
+          'n': 'underline',
+          'm': 'strikethrough'
+        };
 
-        const logo = document.getElementById("server-icon");
-        logo.src = data.favicon;
-    } 
+        let formattedText = '';
+        let segments = text.split(/(§[0-9a-fk-or])/);
 
-}
+        segments.forEach(segment => {
+          if (segment.startsWith('§')) {
+            let code = segment[1];
+            if (colorCodes[code]) {
+              formattedText += `<span class="${colorCodes[code]}">`;
+            } else if (code === 'r') {
+              formattedText += '</span>'.repeat((formattedText.match(/<span/g) || []).length);
+            }
+          } else {
+            formattedText += segment;
+          }
+        });
 
-initServerData("join.insanitycraft.net","25565");
+        formattedText += '</span>'.repeat((formattedText.match(/<span/g) || []).length);
+        return formattedText;
+      }
+    }
 
-</script>
-
-
+    initServerData("bmc4.moddedmc.net", "25565");
+  </script>
 </body>
 </html>
