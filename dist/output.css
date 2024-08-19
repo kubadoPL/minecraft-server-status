@@ -481,6 +481,32 @@ Ensure the default browser behavior of the `hidden` attribute.
 .center-container {
   display: flex;
   align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 6rem;
+  color: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(4px);
+}
+
+@media (max-width: 768px) {
+  .center-container {
+    padding: 4rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .center-container {
+    padding: 2rem;
+    max-width: 70%;
+  }
+ 
+}
+
+@media (max-width: 480px) {
+  .center-container {
+    padding: 1rem;
+  }
 }
 
 .center-container > :not([hidden]) ~ :not([hidden]) {
@@ -589,4 +615,29 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: #333;
   color: #AAAAAA;
   font-size: 14px;
+}
+
+ /* New styles for semi-transparent background */
+ .advertisemnt-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0); /* Semi-transparent black background */
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
+  padding: 20px; /* Adjust padding as needed */
+}
+
+.advertisemnt {
+  max-width: 309px;
+  max-height: 309px;
+  width: 80%;
+  height: auto;
+}
+
+.advertisemnt img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
